@@ -21,6 +21,9 @@ with billing switched off.
 |---|---|
 | ![Home, the notes example](docs/screenshots/home.png) | ![Billing](docs/screenshots/billing.png) |
 
+Try it without installing anything: the [live demo](https://solo-production-442c.up.railway.app)
+runs on sample data in your browser, with no sign-up.
+
 The pictures in `docs/screenshots/` were rendered without a Clerk account.
 See [How the screenshots were made](#how-the-screenshots-were-made).
 
@@ -390,13 +393,13 @@ you rely on it.
 
 ## How the screenshots were made
 
-No Clerk account was used. The pictures were rendered from this app's own
-screens with sample data in place of the API, a sample signed-in person, and
-labelled placeholders where Clerk's components appear (the account control in
-the header, and the profile on the Account page). The tool that did it is not
-part of this repository. So the pictures show the layout, the notes screen,
-the billing screen and the upgrade page as the code draws them; they do not
-show sign-in or Clerk's own components.
+No Clerk account was used. The pictures come from the public demo of this
+starter, which runs these screens on sample data with stand-ins where Clerk's
+components appear (the account control in the header, and the profile on the
+Account page). So they show the layout, the notes screen, the billing screen
+and the upgrade page as the code draws them; they do not show sign-in or
+Clerk's own components. You can open the demo yourself:
+<https://solo-production-442c.up.railway.app>.
 
 ## Versions
 
