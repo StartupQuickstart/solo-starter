@@ -1,0 +1,66 @@
+{
+  "name": "@app/backend",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "description": "Shared API foundation: Express bootstrap, Clerk auth and user provisioning, config, logging, error handling.",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/cjs/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/cjs/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "pnpm run clean && pnpm run build:cjs && pnpm run build:esm && pnpm run build:esm-package",
+    "build:cjs": "tsc && tsc-alias",
+    "build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json",
+    "build:esm-package": "echo '{\"type\":\"module\"}' > dist/esm/package.json",
+    "build:watch": "tsc -w",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clerk/express": "^2.1.78",
+    "@logtail/node": "^0.5.12",
+    "@logtail/winston": "^0.5.12",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "morgan": "^1.12.1",
+    "winston": "^3.19.0",
+    "zod": "^4.6.5"
+  },
+  "peerDependencies": {
+    "@prisma/client": "^6.19.3",
+    "prisma": "^6.19.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.19.2",
+    "@types/supertest": "^6.0.2",
+    "@vitest/coverage-v8": "^5.0.3",
+    "eslint": "^9.39.4",
+    "supertest": "^7.3.1",
+    "tsc-alias": "^1.9.7",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.1",
+    "vite": "^8.0.0",
+    "vitest": "^5.0.3"
+  }
+}

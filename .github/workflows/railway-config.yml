@@ -1,0 +1,101 @@
+# Railway infrastructure as code: plan on pull requests that touch .railway/,
+# apply when the pull request merges. See docs/RAILWAY.md.
+#
+# One environment. Create a GitHub environment named "production" under the
+# repository's Settings, Environments, and give it one secret, RAILWAY_TOKEN:
+# a Railway project token scoped to the project's production environment.
+#
+# Until that secret exists this workflow fails on pull requests that touch
+# .railway/. It does nothing on any other pull request. Delete this file if
+# you apply the configuration by hand.
+name: Railway config
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, closed]
+    paths:
+      - '.railway/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+# Never plan and apply at once.
+concurrency:
+  group: railway-config
+  cancel-in-progress: false
+
+env:
+  # Pinned exactly. The authors found that 5.64.2 rejected `railway config plan`
+  # with a project token ("Unauthorized") while 5.62.1 accepted the same token.
+  # Re-test before raising this.
+  RAILWAY_CLI_VERSION: '5.62.1'
+
+jobs:
+  plan:
+    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      # Only the root workspace: the plan needs the `railway` SDK, not the apps.
+      - run: pnpm install --frozen-lockfile --filter .
+      - name: Install Railway CLI
+        run: npm install -g "@railway/cli@${RAILWAY_CLI_VERSION}"
+      - name: Plan
+        id: plan
+        # --detailed-exit-code: 0 = no changes, 2 = changes pending, else error.
+        run: |
+          set +e
+          railway config plan --detailed-exit-code > plan.txt 2>&1
+          code=$?
+          set -e
+          cat plan.txt
+          if [ "$code" -ne 0 ] && [ "$code" -ne 2 ]; then exit "$code"; fi
+      - name: Publish plan
+        if: always() && steps.plan.outcome != 'skipped'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          {
+            echo '### Railway config plan'
+            echo 'Applied automatically when this PR merges. Destructive changes will stop the apply for a manual `railway config apply`.'
+            echo '```'
+            cat plan.txt
+            echo '```'
+          } > comment.md
+          cat comment.md >> "$GITHUB_STEP_SUMMARY"
+          gh pr comment "$PR" --body-file comment.md --edit-last 2>/dev/null \
+            || gh pr comment "$PR" --body-file comment.md
+
+  apply:
+    if: github.event.action == 'closed' && github.event.pull_request.merged && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter .
+      - name: Install Railway CLI
+        run: npm install -g "@railway/cli@${RAILWAY_CLI_VERSION}"
+      # No --confirm-destructive: deleting a service, volume or variable must
+      # be applied by a person, not by a merge.
+      - name: Apply
+        run: railway config apply --yes

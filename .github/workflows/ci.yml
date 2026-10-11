@@ -1,0 +1,66 @@
+# Checks every pull request and every push to main.
+#
+# No secrets are needed: the build and every test run without Clerk or Stripe
+# keys. The API integration tests run against the Postgres service below.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The integration tests truncate this database. It exists only for the job.
+  DATABASE_URL_TEST: postgresql://postgres:postgres@localhost:5432/app_test
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        # The same major version as apps/api/docker-compose.yml.
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d app_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      # Reads the pnpm version from `packageManager` in package.json.
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm build
+      - name: Type-check
+        run: pnpm type-check
+      - name: Lint
+        run: pnpm lint
+      - name: Unit tests
+        run: pnpm test
+      - name: Migrate the test database
+        run: pnpm --filter @app/api db:migrate:deploy
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL_TEST }}
+          DIRECT_URL: ${{ env.DATABASE_URL_TEST }}
+      - name: API integration tests
+        run: pnpm test:int

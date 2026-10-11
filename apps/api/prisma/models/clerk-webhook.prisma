@@ -1,0 +1,16 @@
+model ClerkWebhookEvent {
+  id          String   @id @default(dbgenerated("app.nanoid('evt_'::text)"))
+  eventType   String   @map("event_type")
+  eventId     String   @unique @map("event_id")
+  objectId    String   @map("object_id")
+  payload     Json
+  processedAt DateTime @default(now()) @map("processed_at")
+  status      String   @default("processed")
+  error       String?
+
+  @@index([eventType])
+  @@index([objectId])
+  @@index([processedAt])
+  @@map("clerk_webhook_events")
+  @@schema("app")
+}

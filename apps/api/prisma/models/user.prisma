@@ -1,0 +1,32 @@
+model User {
+  id           String    @id @default(dbgenerated("app.nanoid('usr_'::text)"))
+  clerkId      String    @unique @map("clerk_id")
+  email        String?   @map("email")
+  firstName    String?   @map("first_name")
+  lastName     String?   @map("last_name")
+  username     String?   @map("username")
+  imageUrl     String?   @map("image_url")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+  lastSignInAt DateTime? @map("last_sign_in_at")
+
+  // Stripe billing: the user is the billing entity.
+  // stripeCustomerId is set when the user first opens Checkout. The other
+  // four are written ONLY by the Stripe webhook: subscriptionStatus is
+  // Stripe's status of the user's subscription (what `isSubscribed` reads),
+  // stripeSubscriptionId names that subscription, and the last two are shown
+  // on the billing page.
+  stripeCustomerId              String?   @unique @map("stripe_customer_id")
+  stripeSubscriptionId          String?   @unique @map("stripe_subscription_id")
+  subscriptionStatus            String?   @map("subscription_status")
+  subscriptionCurrentPeriodEnd  DateTime? @map("subscription_current_period_end")
+  subscriptionCancelAtPeriodEnd Boolean   @default(false) @map("subscription_cancel_at_period_end")
+
+  // EXAMPLE: notes. The relation to the example table.
+  notes Note[]
+
+  @@index([deletedAt])
+  @@map("users")
+  @@schema("app")
+}

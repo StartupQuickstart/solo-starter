@@ -1,0 +1,20 @@
+// EXAMPLE: notes. This whole file.
+// The example table: a note belongs to one user. Copy this model for your own
+// tables.
+model Note {
+  id        String    @id @default(dbgenerated("app.nanoid('note_'::text)"))
+  // The owner. Every query filters on it.
+  userId    String    @map("user_id")
+  title     String    @map("title")
+  body      String    @default("") @map("body")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  // Soft delete: every read filters on `deletedAt: null`.
+  deletedAt DateTime? @map("deleted_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // The list query: one user's live notes, newest first.
+  @@index([userId, deletedAt, createdAt])
+  @@map("notes")
+  @@schema("app")
+}

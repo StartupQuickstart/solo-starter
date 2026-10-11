@@ -1,0 +1,38 @@
+{
+  "name": "solo-starter",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "A single-user SaaS starter: Next.js client, Express and Prisma API, Clerk sign-in, one Stripe subscription.",
+  "scripts": {
+    "build": "turbo build",
+    "build:packages": "turbo build --filter=./packages/*",
+    "dev": "turbo dev",
+    "dev:web": "pnpm --filter @app/web dev",
+    "dev:api": "pnpm --filter @app/api dev",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "test": "turbo test",
+    "test:int": "pnpm --filter @app/api test:int",
+    "db:up": "docker compose -f apps/api/docker-compose.yml up -d --wait",
+    "db:down": "docker compose -f apps/api/docker-compose.yml down",
+    "db:migrate": "pnpm --filter @app/api db:migrate:deploy"
+  },
+  "devDependencies": {
+    "railway": "^3.13.1",
+    "turbo": "^2.11.7",
+    "typescript": "^6.0.3"
+  },
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=24"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "esbuild"
+    ]
+  }
+}

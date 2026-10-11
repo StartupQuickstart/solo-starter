@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 32" width="132" height="32" role="img" aria-label="Placeholder logo">
+  <rect x="1" y="1" width="30" height="30" rx="9" fill="#c8f04b"/>
+  <path d="M10 21V11h7.5a3.5 3.5 0 0 1 0 7H13v3z" fill="#101318"/>
+  <text x="40" y="21.5" font-family="'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="650" letter-spacing="-0.2" fill="#f4f5f1">Your App</text>
+</svg>

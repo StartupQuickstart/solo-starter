@@ -1,0 +1,36 @@
+# Local development infrastructure for the API.
+#
+#   docker compose -f apps/api/docker-compose.yml up -d --wait
+#
+# Postgres serves two databases:
+#   - app       local development (DATABASE_URL / DIRECT_URL)
+#   - app_test  integration tests (DATABASE_URL_TEST, see vitest.int.config.ts)
+#
+# `name` pins the Compose project. Without it Compose derives the project from
+# the directory name ("api"), and a second repository with an apps/api folder
+# would share the project: `up` in one would then recreate the other's
+# containers. Rename it together with the container and volume when you fork.
+#
+# Published on host port 5442 so it does not collide with a Postgres on 5432.
+name: solo-starter
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: solo-starter-postgres
+    ports:
+      - '5442:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    volumes:
+      - ./docker/initdb:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d app']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:

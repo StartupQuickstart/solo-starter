@@ -1,0 +1,52 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "agentGuidance": false,
+  "globalDependencies": ["**/.env.*local"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "type-check": {
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"]
+    },
+    "@app/web#build": {
+      "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_*"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "@app/web#test": {
+      "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_*"]
+    },
+    "@app/api#build": {
+      "dependsOn": ["^build"],
+      "env": ["DATABASE_URL", "DIRECT_URL"],
+      "outputs": ["dist/**", "generated/**"]
+    },
+    "@app/api#db:generate": {
+      "inputs": ["prisma/schema.prisma", "prisma/models/**"],
+      "outputs": ["generated/**"]
+    },
+    "@app/api#type-check": {
+      "dependsOn": ["^build", "db:generate"]
+    },
+    "@app/api#lint": {
+      "dependsOn": ["^build", "db:generate"]
+    },
+    "@app/api#test": {
+      "dependsOn": ["^build", "db:generate"],
+      "env": ["DATABASE_URL_TEST"]
+    }
+  }
+}

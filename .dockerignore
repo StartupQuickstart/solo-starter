@@ -1,0 +1,25 @@
+# Keep the Docker build context small and never bake local secrets or build
+# caches into an image (the Dockerfiles install dependencies and build from source).
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/generated
+**/coverage
+
+.git
+.github
+.DS_Store
+
+# Local secrets. `.env.example` files are not ignored: they carry no secrets.
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+**/.env.*.local
+
+docs
+README.md
+LICENSE
+.railway

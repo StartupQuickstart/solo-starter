@@ -1,0 +1,283 @@
+/*
+ * App theme: the single source of every colour, typeface, radius, shadow and
+ * motion value in the app. Components read these tokens and nothing else, so
+ * re-branding is a matter of changing values in this file.
+ *
+ * The direction: cobalt on ink, with one lime signal. A warm-neutral canvas
+ * carries white, lightly raised surfaces; the navigation is a single ink
+ * panel; cobalt marks what can be acted on; lime is spent on a few things
+ * that should catch the eye and nowhere else. Headings and figures are set in
+ * a display grotesque, everything else in a quiet text face.
+ *
+ * TO RE-BRAND, change the block marked "Brand" below: the primary ramp, the
+ * accent pair, the ink and the two font families. Every text/background
+ * pair here meets WCAG AA (4.5:1); check the pairs again when you change a
+ * value.
+ *
+ * Structure: raw values on :root, mapped to Tailwind v4 utilities via
+ * @theme inline. The token names are shadcn's, so any shadcn component reads
+ * them unchanged.
+ */
+
+@import 'tailwindcss';
+
+/* Tell Tailwind v4 where to look for classes */
+@source "../../node_modules/@app/ui/dist/**/*.js";
+@source "../**/*.{ts,tsx}";
+
+@custom-variant dark (&:is(.dark *));
+
+:root,
+:host {
+  /* ── Brand ──────────────────────────────────────────────────────────────
+     The primary ramp. 600 is the brand colour: buttons, links, focus rings.
+     White text on 600 and darker is at least 6:1. */
+  --primary-50: #eef2ff;
+  --primary-100: #dce4ff;
+  --primary-200: #bccbff;
+  --primary-300: #92a8ff;
+  --primary-400: #6681fb;
+  --primary-500: #4460f5;
+  --primary-600: #2f47e8;
+  --primary-700: #2537c4;
+  --primary-800: #212f9c;
+  --primary-900: #1e2b78;
+  --primary-950: #131a4a;
+
+  /* The accent: a signal, used on a handful of elements. It is a fill with
+     dark text on it, or a mark on the ink panel. Never text on white. */
+  --signal: #c8f04b;
+  --signal-foreground: #1b2400;
+
+  /* The ink: the navigation panel and tooltips. */
+  --ink: #101318;
+  --ink-raised: #1b1f27;
+  --ink-border: #262b35;
+  --ink-foreground: #f4f5f1;
+  --ink-muted: #a3a8b3;
+
+  /* Typefaces. Loaded in src/app/layout.tsx from @fontsource-variable. */
+  --font-display-family: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-text-family: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* ── Neutrals: warm, so the canvas does not read as default grey ──────── */
+  --background: #f5f5f2;
+  --foreground: #14171f;
+  --card: #ffffff;
+  --card-foreground: #14171f;
+  --popover: #ffffff;
+  --popover-foreground: #14171f;
+  --secondary: #eeeeea;
+  --secondary-foreground: #14171f;
+  --muted: #f0f0ec;
+  --muted-foreground: #5f626a;
+  --accent: #eeeeea;
+  --accent-foreground: #14171f;
+  --border: #e4e3dd;
+  --input: #d3d2cb;
+
+  /* ── Roles built from the brand ──────────────────────────────────────── */
+  --primary: var(--primary-600);
+  --primary-hover: var(--primary-700);
+  --primary-foreground: #ffffff;
+  --primary-soft: var(--primary-50);
+  --primary-soft-foreground: var(--primary-800);
+  --ring: var(--primary-500);
+
+  --destructive: #d92d20;
+  --destructive-foreground: #ffffff;
+
+  /* Status. Each is a tinted surface and a text colour; a status is always
+     shown with a word or an icon as well, never by colour alone. */
+  --success: #0b7a4b;
+  --success-foreground: #ffffff;
+  --success-soft: #e6f6ee;
+  --warning: #b54708;
+  --warning-foreground: #ffffff;
+  --warning-soft: #fef0d7;
+  --danger-soft: #fdeceb;
+  --info-soft: var(--primary-50);
+  --pending: #b54708;
+  --pending-foreground: #ffffff;
+
+  /* ── Shape ───────────────────────────────────────────────────────────── */
+  /* Controls 8px, cards 14px, dialogs and sheets 18px, pills fully round. */
+  --radius: 0.5rem;
+
+  /* ── Elevation: three steps, tinted with the ink, each with a hairline ── */
+  --elevation-1: 0 0 0 1px rgb(16 19 24 / 0.05), 0 1px 2px rgb(16 19 24 / 0.05);
+  --elevation-2: 0 0 0 1px rgb(16 19 24 / 0.05), 0 2px 4px rgb(16 19 24 / 0.04), 0 8px 20px -6px rgb(16 19 24 / 0.1);
+  --elevation-3: 0 0 0 1px rgb(16 19 24 / 0.06), 0 8px 16px -4px rgb(16 19 24 / 0.1), 0 24px 48px -12px rgb(16 19 24 / 0.22);
+
+  /* ── Motion: quick, eased out, never past 300ms ──────────────────────── */
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --duration-slow: 280ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* ── Sidebar: the ink panel ──────────────────────────────────────────── */
+  --sidebar-width: 15.5rem;
+  --sidebar-width-mobile: 18rem;
+  --sidebar-width-icon: 3rem;
+  --sidebar: var(--ink);
+  --sidebar-foreground: var(--ink-muted);
+  --sidebar-primary: var(--ink-raised);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--ink-raised);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: var(--ink-border);
+  --sidebar-ring: var(--signal);
+
+  /* The dot and the fill of a neutral status ("finished", "inert"). */
+  --tone-neutral: #b9b8b0;
+}
+
+@theme inline {
+  --font-sans: var(--font-text-family);
+  --font-display: var(--font-display-family);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-soft-foreground: var(--primary-soft-foreground);
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+  --color-primary-950: var(--primary-950);
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-ink: var(--ink);
+  --color-ink-raised: var(--ink-raised);
+  --color-ink-border: var(--ink-border);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-ink-muted: var(--ink-muted);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 2px); /* 6px: badges, small controls */
+  --radius-md: var(--radius); /* 8px: buttons and inputs */
+  --radius-lg: calc(var(--radius) + 2px); /* 10px: menus, popovers */
+  --radius-xl: calc(var(--radius) + 6px); /* 14px: cards and panels */
+  --radius-2xl: calc(var(--radius) + 10px); /* 18px: dialogs and sheets */
+  --shadow-xs: var(--elevation-1);
+  --shadow-sm: var(--elevation-1);
+  --shadow-md: var(--elevation-2);
+  --shadow-lg: var(--elevation-3);
+  --shadow-xl: var(--elevation-3);
+  --default-transition-duration: var(--duration-base);
+  --default-transition-timing-function: var(--ease-out);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger-soft: var(--danger-soft);
+  --color-info-soft: var(--info-soft);
+  --color-pending: var(--pending);
+  --color-pending-foreground: var(--pending-foreground);
+
+  --animate-rise: rise var(--duration-slow) var(--ease-out) both;
+  --animate-fade: fade var(--duration-base) var(--ease-out) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    font-family: var(--font-text-family);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  /* Headings and titles take the display face, set a little tighter. */
+  h1,
+  h2,
+  h3,
+  [data-slot='card-title'],
+  [data-slot='dialog-title'],
+  [data-slot='alert-dialog-title'],
+  [data-slot='sheet-title'] {
+    font-family: var(--font-display-family);
+    letter-spacing: -0.015em;
+  }
+  ::selection {
+    background: var(--primary-200);
+    color: var(--primary-950);
+  }
+}
+
+/* People who ask for less motion get none: no entrances, no
+   transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* iOS Safari zooms the page when a focused form control's font-size is under
+   16px. Bump controls to 16px on phones so focus keeps the layout size;
+   desktop keeps the design's text-sm. */
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

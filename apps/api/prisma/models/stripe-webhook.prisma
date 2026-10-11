@@ -1,0 +1,16 @@
+// Stripe webhook de-duplication. Stripe can deliver the same event more than
+// once; an event id recorded here as processed is acknowledged without being
+// applied again. A failed attempt is recorded too, and is retried.
+model StripeWebhookEvent {
+  id          String   @id @default(dbgenerated("app.nanoid('evt_'::text)"))
+  eventId     String   @unique @map("event_id")
+  eventType   String   @map("event_type")
+  status      String   @default("processed")
+  error       String?
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@index([eventType])
+  @@index([processedAt])
+  @@map("stripe_webhook_events")
+  @@schema("app")
+}
